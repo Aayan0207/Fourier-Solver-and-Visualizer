@@ -91,7 +91,6 @@ class Wave_Equation:
     def solve(self):
         self.solve_boundary_conditions()
         self.solve_initial_conditions()
-        sp.pprint(self.general_solution)
 
 
 class Condition:
