@@ -28,7 +28,6 @@ class Wave_Equation:
         self.X = Wave_Equation.X
         self.T = Wave_Equation.T
         self.general_solution = Wave_Equation.general_solution
-        self.unknowns = {C1, C2, C3, C4, p}
 
     def solve_boundary_conditions(self):
         for cond in self.boundary_conditions:
