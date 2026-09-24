@@ -13,14 +13,18 @@ class Wave_Equation:
 
     def __init__(
         self,
-        boundary_conditions=[],
-        initial_conditions=[],
+        boundary_conditions=None,
+        initial_conditions=None,
         lower=0,
         upper=L,
     ):
         self.length = upper - lower
-        self.boundary_conditions = boundary_conditions
-        self.initial_conditions = initial_conditions
+        self.boundary_conditions = []
+        if boundary_conditions:
+            self.boundary_conditions = boundary_conditions
+        self.initial_conditions = []
+        if initial_conditions:
+            self.initial_conditions = initial_conditions
         self.X = Wave_Equation.X
         self.T = Wave_Equation.T
         self.general_solution = Wave_Equation.general_solution
@@ -32,20 +36,18 @@ class Wave_Equation:
             value = cond.value
             expression = self.X.subs(x, sub)
             condition = sp.Eq(expression, value)
-            involved = self.unknowns.intersection(expression.free_symbols)
-            for variable in involved:
-                solution = sp.solve(condition, variable)
+            if expression.has(C1):
+                solution = sp.solve(condition, C1)
                 if solution:
-                    self.unknowns.remove(variable)
-                    if variable == C1 and solution[0] == 0:
-                        self.unknowns.remove(C2)
-                    elif variable == C2 and solution[0] == 0:
-                        self.unknowns.remove(C1)
-                    if variable == p:
-                        self.X = self.X.subs(variable, n * solution[1])
-                        self.T = self.T.subs(variable, n * solution[1])
-                    else:
-                        self.X = self.X.subs(variable, solution[0])
+                    self.X = self.X.subs(C1, solution[0])
+            elif expression.has(p) and expression.has(C2):
+                p_value = n * sp.pi / self.length
+                self.X = self.X.subs(p, p_value)
+                self.T = self.T.subs(p, p_value)
+            elif expression.has(C2):
+                solution = sp.solve(condition, C2)
+                if solution:
+                    self.X = self.X.subs(C2, solution[0])
         self.general_solution = self.X * self.T
 
     def solve_initial_conditions(self):
@@ -57,8 +59,8 @@ class Wave_Equation:
             elif cond.type.lower() == "velocity":
                 velocity = cond.value
 
-        a_n = self.a_n(displacement)
-        b_n = self.b_n(velocity)
+        a_n = self.a_n(velocity)
+        b_n = self.b_n(displacement)
 
         self.X = self.X.subs(C2, 1)
 
@@ -67,25 +69,25 @@ class Wave_Equation:
 
         self.general_solution = self.X * self.T
 
-    def a_n(self, displacement):
-        a_n = (
+    def b_n(self, displacement):
+        b_n = (
             2
             / self.length
             * sp.integrate(
                 displacement * sp.sin(n * sp.pi * x / self.length), (x, 0, self.length)
             )
         )
-        return sp.simplify(a_n)
+        return sp.simplify(b_n)
 
-    def b_n(self, velocity):
-        b_n = (
+    def a_n(self, velocity):
+        a_n = (
             2
             / (n * sp.pi * c)
             * sp.integrate(
                 velocity * sp.sin(n * sp.pi * x / self.length), (x, 0, self.length)
             )
         )
-        return sp.simplify(b_n)
+        return sp.simplify(a_n)
 
     def solve(self):
         self.solve_boundary_conditions()
@@ -125,11 +127,11 @@ class Velocity_Condition(Initial_Condition):
 
 def main():
     wave = Wave_Equation(
-          [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
-                 [
-                     Displacement_Condition(sp.Function("f")(x)),
-                     Velocity_Condition(0),
-                 ],
+        [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
+        [
+            Displacement_Condition(x * (L**2 - x**2) / 100),
+            Velocity_Condition(0),
+        ],
     )
     wave.solve()
 
