@@ -1,9 +1,27 @@
 import sympy as sp
+from sympy.parsing.sympy_parser import (
+    parse_expr,
+    standard_transformations,
+    implicit_multiplication_application,
+)
 
 C1, C2, C3, C4, x, y, p, c, t, a, L, lam, b, h = sp.symbols(
     "C1 C2 C3 C4 x y p c t a L lambda b h"
 )
 n = sp.symbols("n", integer=True, positive=True)
+
+transformations = standard_transformations + (implicit_multiplication_application,)
+
+
+def create_piecewise(expr):
+    expr = expr.removeprefix("Which(").removesuffix(")")
+    parts = [p.strip() for p in expr.split(",")]
+    cases = []
+    for i in range(0, len(parts), 2):
+        condition = parse_expr(parts[i], transformations=transformations)
+        expression = parse_expr(parts[i + 1], transformations=transformations)
+        cases.append((expression, condition))
+    return str(sp.Piecewise(*cases))
 
 
 class Wave_Equation:
@@ -91,6 +109,7 @@ class Wave_Equation:
     def solve(self):
         self.solve_boundary_conditions()
         self.solve_initial_conditions()
+        return sp.latex(self.general_solution)
 
 
 class Condition:
@@ -127,7 +146,12 @@ def main():
     wave = Wave_Equation(
         [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
         [
-            Displacement_Condition(x * (L**2 - x**2) / 100),
+            Displacement_Condition(
+                sp.Piecewise(
+                    (3 * h * x / L, x <= L / 3),
+                    (3 * h * (L - x) / (2 * L), x <= L),
+                )
+            ),
             Velocity_Condition(0),
         ],
     )

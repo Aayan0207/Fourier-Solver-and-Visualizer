@@ -1,19 +1,55 @@
 import { useState } from "react";
 import Condition from "./Conditon";
+import OutputBlock from "./OutputBlock";
+import InputBlock from "./InputBlock";
+import getExpression from "../assets/ComputeEngine";
 
 function WaveEquation() {
   const [boundary_0, setBoundary_0] = useState(0);
+  const [boundary_L, setBoundary_L] = useState(0);
+  const [displacement, setDisplacement] = useState(0);
+  const [velocity, setVelocity] = useState(0);
+  const [answer, setAnswer] = useState(null);
+  function solveWave() {
+    fetch("http://127.0.0.1:5000/solve_wave", {
+      method: "POST",
+      body: JSON.stringify({
+        left_boundary: getExpression(boundary_0),
+        right_boundary: getExpression(boundary_L),
+        displacement: getExpression(displacement),
+        velocity: getExpression(velocity),
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setAnswer(data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
   return (
     <>
       <div className="wave_conditions">
         <Condition left="u(0,t)"></Condition>
-        <input type = "text" className="condition_input" placeholder="Boundary condition at left margin"/>
+        <InputBlock value={boundary_0} setValue={setBoundary_0} />
         <Condition left="u(L,t)"></Condition>
-        <input type = "text" className="condition_input" placeholder="Boundary Condition at right margin"/>
+        <InputBlock value={boundary_L} setValue={setBoundary_L} />
         <Condition left="u(x,0)"></Condition>
-        <input type = "text" className="condition_input" placeholder="Initial Displacement Condition"/>
+        <InputBlock value={displacement} setValue={setDisplacement} />
         <Condition left="u_t(x,0)"></Condition>
-        <input type = "text" className="condition_input" placeholder="Initial Velocity Condition"/>
+        <InputBlock value={velocity} setValue={setVelocity} />
+        <button
+          className="solve_button"
+          id="wave_solve"
+          onClick={() => solveWave()}
+        >
+          Solve
+        </button>
+        {answer != null ? <OutputBlock value={answer} /> : ""}
       </div>
     </>
   );

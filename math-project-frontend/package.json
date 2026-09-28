@@ -10,8 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cortex-js/compute-engine": "^0.140.0",
+    "katex": "^0.18.9",
+    "mathlive": "^0.110.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-katex": "^3.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
