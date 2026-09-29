@@ -13,6 +13,38 @@ n = sp.symbols("n", integer=True, positive=True)
 transformations = standard_transformations + (implicit_multiplication_application,)
 
 
+def generate_condition(expr):
+    if not isinstance(expr, str):
+        return sp.sympify(expr)
+
+    expressions = {
+        "np.arcsin": "asin",
+        "np.arccos": "acos",
+        "np.arctan": "atan",
+        "np.sinh": "sinh",
+        "np.cosh": "cosh",
+        "np.tanh": "tanh",
+        "np.log": "log",
+        "np.exp": "exp",
+    }
+    for key, value in expressions.items():
+        expr = expr.replace(key, value)
+
+    return sp.sympify(
+        expr,
+        locals={
+            "asin": sp.asin,
+            "acos": sp.acos,
+            "atan": sp.atan,
+            "sinh": sp.sinh,
+            "cosh": sp.cosh,
+            "tanh": sp.tanh,
+            "log": sp.log,
+            "exp": sp.exp,
+        },
+    )
+
+
 def create_piecewise(expr):
     expr = expr.removeprefix("Which(").removesuffix(")")
     parts = [p.strip() for p in expr.split(",")]
@@ -155,7 +187,7 @@ def main():
             Velocity_Condition(0),
         ],
     )
-    wave.solve()
+    sp.pprint(wave.solve())
 
 
 if __name__ == "__main__":

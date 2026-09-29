@@ -1,18 +1,39 @@
 import "mathlive";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Piecewise from "./PiecewiseBlock";
 function InputBlock({ value, setValue }) {
   const [piecewise, setPiecewise] = useState(false);
+  const mfRef = useRef(null);
+
+  useEffect(() => {
+    if (mfRef.current) {
+      mfRef.current.mathVirtualKeyboardPolicy = "manual";
+    }
+    window.mathVirtualKeyboard.layouts = ["numeric", "symbols"];
+  }, []);
+
+  useEffect(() => {
+    if (!piecewise) {
+      setValue(0);
+    }
+  }, [piecewise, setValue]);
+
   return (
-    <div className="input_block">
+    <div
+      className="input_block"
+      onBlur={() => {
+        window.mathVirtualKeyboard.hide();
+      }}
+    >
       <math-field
         onChange={(e) => setValue(e.target.value)}
         value={value}
+        ref={mfRef}
       ></math-field>
       <button onClick={() => setPiecewise((prev) => !prev)}>
         Piecewise Input
       </button>
-      {piecewise ? <Piecewise setter = {setValue}/> : ""}
+      {piecewise ? <Piecewise setter={setValue} /> : ""}
     </div>
   );
 }
