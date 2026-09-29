@@ -21,7 +21,7 @@ def solve_wave():
     session["displacement"] = (
         body.get("displacement") if body.get("displacement") else 0
     )
-    if session["displacement"].startswith("Which"):
+    if session["displacement"] and session["displacement"].startswith("Which"):
         session["displacement"] = create_piecewise(session["displacement"])
     session["velocity"] = body.get("velocity") if body.get("velocity") else 0
     session["wave"] = Wave_Equation(
