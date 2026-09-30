@@ -1,7 +1,7 @@
 import React from "react";
 
 function HeatEquation() {
-  return <>heat</>;
+  return <div className="heat_conditions">heat</div>;
 }
 
 export default HeatEquation;
