@@ -17,16 +17,21 @@ def solve_wave():
     session["right_boundary"] = body.get("right_boundary")
     session["displacement"] = body.get("displacement")
     session["velocity"] = body.get("velocity")
+    session["upper"] = body.get("upper")
     try:
         session["wave"] = Wave_Equation(
             boundary_conditions=[
                 Boundary_Condition(0, generate_condition(session["left_boundary"])),
-                Boundary_Condition(L, generate_condition(session["right_boundary"])),
+                Boundary_Condition(
+                    generate_condition(session["upper"]),
+                    generate_condition(session["right_boundary"]),
+                ),
             ],
             initial_conditions=[
                 Displacement_Condition(generate_condition(session["displacement"])),
                 Velocity_Condition(generate_condition(session["velocity"])),
             ],
+            upper=generate_condition(session["upper"]),
         ).solve()
     except (ValueError, AttributeError):
         session["wave"] = r"\text{Unable to solve this equation.}"
@@ -39,16 +44,21 @@ def solve_heat():
     session["left_boundary"] = body.get("left_boundary")
     session["right_boundary"] = body.get("right_boundary")
     session["temperature"] = body.get("temperature")
-    # try:
-    session["heat"] = Heat_Equation(
-        boundary_conditions=[
-            Boundary_Condition(0, generate_condition(session["left_boundary"])),
-            Boundary_Condition(L, generate_condition(session["right_boundary"])),
-        ],
-        initial_conditions=[
-            Temperature_Condition(generate_condition(session["temperature"])),
-        ],
-    ).solve()
-    # except (ValueError, AttributeError):
-    #     session["heat"] = r"\text{Unable to solve this equation.}"
+    session["upper"] = body.get("upper")
+    try:
+        session["heat"] = Heat_Equation(
+            boundary_conditions=[
+                Boundary_Condition(0, generate_condition(session["left_boundary"])),
+                Boundary_Condition(
+                    generate_condition(session["upper"]),
+                    generate_condition(session["right_boundary"]),
+                ),
+            ],
+            initial_conditions=[
+                Temperature_Condition(generate_condition(session["temperature"])),
+            ],
+            upper=(generate_condition(session["upper"])),
+        ).solve()
+    except (ValueError, AttributeError):
+        session["heat"] = r"\text{Unable to solve this equation.}"
     return jsonify(session["heat"])

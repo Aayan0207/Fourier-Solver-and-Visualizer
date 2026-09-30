@@ -184,7 +184,10 @@ body::before {
   gap: 12px;
   flex-wrap: wrap;
 }
-
+.input_block_regular math-field::part(virtual-keyboard-toggle),
+.input_block_regular math-field::part(menu-toggle) {
+  display: none;
+}
 .input_block math-field {
   flex: 1;
   min-width: 200px;

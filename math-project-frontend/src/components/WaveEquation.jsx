@@ -3,12 +3,14 @@ import Condition from "./Conditon";
 import OutputBlock from "./OutputBlock";
 import InputBlock from "./InputBlock";
 import getExpression from "../assets/ComputeEngine";
+import InputBlockRegular from "./InputBlockRegular";
 
 function WaveEquation() {
   const [boundary_0, setBoundary_0] = useState(0);
   const [boundary_L, setBoundary_L] = useState(0);
   const [displacement, setDisplacement] = useState(0);
   const [velocity, setVelocity] = useState(0);
+  const [upper, setUpper] = useState("L");
   const [answer, setAnswer] = useState(null);
   function solveWave() {
     fetch("http://127.0.0.1:5000/solve_wave", {
@@ -18,6 +20,7 @@ function WaveEquation() {
         right_boundary: getExpression(boundary_L),
         displacement: getExpression(displacement),
         velocity: getExpression(velocity),
+        upper: getExpression(upper),
       }),
       headers: {
         "content-type": "application/json",
@@ -35,6 +38,8 @@ function WaveEquation() {
     <>
       <div className="wave_conditions">
         <h3>Wave Equation</h3>
+        <Condition left="L"></Condition>
+        <InputBlockRegular value={upper} setValue={setUpper} />
         <Condition left="u(0,t)"></Condition>
         <InputBlock value={boundary_0} setValue={setBoundary_0} />
         <Condition left="u(L,t)"></Condition>

@@ -3,11 +3,13 @@ import getExpression from "../assets/ComputeEngine";
 import Condition from "./Conditon";
 import InputBlock from "./InputBlock";
 import OutputBlock from "./OutputBlock";
+import InputBlockRegular from "./InputBlockRegular";
 
 function HeatEquation() {
   const [boundary_0, setBoundary_0] = useState(0);
   const [boundary_L, setBoundary_L] = useState(0);
   const [temperature, setTemperature] = useState(0);
+  const [upper,  setUpper] = useState("L");
   const [answer, setAnswer] = useState(null);
   function solveHeat() {
     fetch("http://127.0.0.1:5000/solve_heat", {
@@ -16,6 +18,7 @@ function HeatEquation() {
         left_boundary: getExpression(boundary_0),
         right_boundary: getExpression(boundary_L),
         temperature: getExpression(temperature),
+        upper: getExpression(upper),
       }),
       headers: {
         "content-type": "application/json",
@@ -33,6 +36,8 @@ function HeatEquation() {
     <>
       <div className="heat_conditions">
         <h3>Heat Equation</h3>
+        <Condition left="L"></Condition>
+        <InputBlockRegular value={upper} setValue={setUpper} />
         <Condition left="u(0,t)"></Condition>
         <InputBlock value={boundary_0} setValue={setBoundary_0} />
         <Condition left="u(L,t)"></Condition>

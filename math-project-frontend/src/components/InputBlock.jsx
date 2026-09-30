@@ -9,7 +9,7 @@ function InputBlock({ value, setValue }) {
     if (mfRef.current) {
       mfRef.current.mathVirtualKeyboardPolicy = "manual";
     }
-    window.mathVirtualKeyboard.layouts = ["numeric", "symbols"];
+    window.mathVirtualKeyboard.layouts = ["numeric", "symbols","greek"];
   }, []);
 
   useEffect(() => {
