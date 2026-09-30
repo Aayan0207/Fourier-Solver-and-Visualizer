@@ -118,7 +118,7 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.wave_conditions, .heat_conditions {
+.wave_conditions, .heat_conditions,.laplace_conditions {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 20px;
