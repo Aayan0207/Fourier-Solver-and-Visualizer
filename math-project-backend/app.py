@@ -13,18 +13,10 @@ CORS(app, origins=["http://localhost:5173"])
 @app.route("/solve_wave", methods=["POST"])
 def solve_wave():
     body = request.get_json()
-    session["left_boundary"] = (
-        body.get("left_boundary") if body.get("left_boundary") else 0
-    )
-    session["right_boundary"] = (
-        body.get("right_boundary") if body.get("right_boundary") else 0
-    )
-    session["displacement"] = (
-        body.get("displacement") if body.get("displacement") else 0
-    )
-    if session["displacement"] and session["displacement"].startswith("Which"):
-        session["displacement"] = create_piecewise(session["displacement"])
-    session["velocity"] = body.get("velocity") if body.get("velocity") else 0
+    session["left_boundary"] = body.get("left_boundary")
+    session["right_boundary"] = body.get("right_boundary") 
+    session["displacement"] = body.get("displacement")
+    session["velocity"] = body.get("velocity") 
     try:
         session["wave"] = Wave_Equation(
             boundary_conditions=[

@@ -148,7 +148,6 @@ body::before {
 .input_block math-field {
   flex: 1;
   min-width: 200px;
-  height: 52px;
   background: var(--input);
   border: 1.5px solid rgba(45,212,191,0.18);
   border-radius: var(--radius);

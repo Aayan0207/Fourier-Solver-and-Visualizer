@@ -14,9 +14,12 @@ transformations = standard_transformations + (implicit_multiplication_applicatio
 
 
 def generate_condition(expr):
+    if not expr:
+        return 0
     if not isinstance(expr, str):
         return sp.sympify(expr)
-
+    if expr.startswith("Which"):
+        expr = create_piecewise(expr)
     expressions = {
         "np.arcsin": "asin",
         "np.arccos": "acos",

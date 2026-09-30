@@ -1,5 +1,3 @@
-import react from "react";
-
 function ModeButton({ name, onClick }) {
   return (
     <>

@@ -30,7 +30,10 @@ function InputBlock({ value, setValue }) {
         value={value}
         ref={mfRef}
       ></math-field>
-      <button onClick={() => setPiecewise((prev) => !prev)}>
+      <button
+        onClick={() => setPiecewise((prev) => !prev)}
+        className="piecewise_input_button"
+      >
         Piecewise Input
       </button>
       {piecewise ? <Piecewise setter={setValue} /> : ""}
