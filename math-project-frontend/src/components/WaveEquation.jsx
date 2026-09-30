@@ -34,6 +34,7 @@ function WaveEquation() {
   return (
     <>
       <div className="wave_conditions">
+        <h3>Wave Equation</h3>
         <Condition left="u(0,t)"></Condition>
         <InputBlock value={boundary_0} setValue={setBoundary_0} />
         <Condition left="u(L,t)"></Condition>
