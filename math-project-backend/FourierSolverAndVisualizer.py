@@ -29,6 +29,11 @@ def generate_condition(expr):
         "np.tanh": "tanh",
         "np.log": "log",
         "np.exp": "exp",
+        "np.sin": "sin",
+        "np.cos": "cos",
+        "np.tan": "tan",
+        "np.sqrt": "sqrt",
+        "np.pi": "pi",
     }
     for key, value in expressions.items():
         expr = expr.replace(key, value)
@@ -44,6 +49,11 @@ def generate_condition(expr):
             "tanh": sp.tanh,
             "log": sp.log,
             "exp": sp.exp,
+            "sin": sp.sin,
+            "cos": sp.cos,
+            "tan": sp.tan,
+            "sqrt": sp.sqrt,
+            "pi": sp.pi,
         },
     )
 
@@ -57,6 +67,84 @@ def create_piecewise(expr):
         expression = parse_expr(parts[i + 1], transformations=transformations)
         cases.append((expression, condition))
     return str(sp.Piecewise(*cases))
+
+
+class Heat_Equation:
+    X = C1 * sp.cos(p * x) + C2 * sp.sin(p * x)
+    T = C3 * sp.exp(-(c**2) * p**2 * t)
+    general_solution = X * T
+
+    def __init__(
+        self,
+        boundary_conditions=None,
+        initial_conditions=None,
+        lower=0,
+        upper=L,
+    ):
+        self.length = upper - lower
+        self.boundary_conditions = []
+        if boundary_conditions:
+            self.boundary_conditions = boundary_conditions
+        self.initial_conditions = []
+        if initial_conditions:
+            self.initial_conditions = initial_conditions
+        self.X = Heat_Equation.X
+        self.T = Heat_Equation.T
+        self.general_solution = Heat_Equation.general_solution
+
+    def solve_boundary_conditions(self):
+        for cond in self.boundary_conditions:
+            sub = cond.x
+            value = cond.value
+            expression = self.X.subs(x, sub)
+            condition = sp.Eq(expression, value)
+
+            if expression.has(C1):
+                solution = sp.solve(condition, C1)
+                if solution:
+                    self.X = self.X.subs(C1, solution[0])
+
+            elif expression.has(p) and expression.has(C2):
+                p_value = n * sp.pi / self.length
+                self.X = self.X.subs(p, p_value)
+                self.T = self.T.subs(p, p_value)
+
+            elif expression.has(C2):
+                solution = sp.solve(condition, C2)
+                if solution:
+                    self.X = self.X.subs(C2, solution[0])
+
+        self.general_solution = self.X * self.T
+
+    def solve_initial_conditions(self):
+        temperature = 0
+
+        for cond in self.initial_conditions:
+            if cond.type.lower() == "temperature":
+                temperature = cond.value
+
+        b_n = self.b_n(temperature)
+
+        self.X = self.X.subs(C2, 1)
+        self.T = self.T.subs(C3, b_n)
+
+        self.general_solution = self.X * self.T
+
+    def b_n(self, temperature):
+        b_n = (
+            2
+            / self.length
+            * sp.integrate(
+                temperature * sp.sin(n * sp.pi * x / self.length),
+                (x, 0, self.length),
+            )
+        )
+        return sp.simplify(b_n)
+
+    def solve(self):
+        self.solve_boundary_conditions()
+        self.solve_initial_conditions()
+        return sp.latex(self.general_solution)
 
 
 class Wave_Equation:
@@ -177,6 +265,12 @@ class Velocity_Condition(Initial_Condition):
         self.value = value
 
 
+class Temperature_Condition(Initial_Condition):
+    def __init__(self, value):
+        super().__init__("Temperature")
+        self.value = value
+
+
 def main():
     wave = Wave_Equation(
         [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
@@ -191,6 +285,13 @@ def main():
         ],
     )
     sp.pprint(wave.solve())
+    heat = Heat_Equation(
+        [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
+        [
+            Temperature_Condition(x * (L**2 - x**2) / 100),
+        ],
+    )
+    sp.pprint(heat.solve())
 
 
 if __name__ == "__main__":
