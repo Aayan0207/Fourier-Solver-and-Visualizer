@@ -168,8 +168,25 @@ class Heat_Equation:
     def solve(self):
         self.solve_boundary_conditions()
         self.solve_initial_conditions()
+class Laplace_Equation:
+    X = C1 * sp.sin(p*x) + C2 * sp.cos(p*x)
+    Y = C3 * sp.exp(p*y) + C4 * sp.exp(-p*y)
+    general_solution = X * Y
 
+    def __init__(self,boundary_conditions=None,lower=0,upper=L):
+        self.length=upper-lower
+        self.boundary_conditions=boundary_conditions or []
+        self.general_solution=Laplace_Equation.general_solution
+        self.boundary_equations=[]
 
+    def solve(self):
+        self.boundary_equations=[]
+        for cond in self.boundary_conditions:
+            if cond.variable=="x":
+                expression=self.general_solution.subs(x,cond.position)
+            else:
+                expression=self.general_solution.subs(y,cond.position)
+            self.boundary_equations.append(sp.Eq(expression,cond.value,evaluate=False))
 class Condition:
     def __init__(self, condition_type):
         self.type = condition_type
@@ -204,7 +221,13 @@ class Temperature_Condition(Initial_Condition):
     def __init__(self, value):
         super().__init__("Temperature")
         self.value = value
-
+        
+class Laplace_Boundary_Condition(Condition):
+    def __init__(self,variable,position,value):
+        super().__init__("boundary")
+        self.variable=variable
+        self.position=position
+        self.value=value
 
 def main():
     wave = Wave_Equation(
@@ -236,6 +259,19 @@ def main():
     print("X =", heat.X)
     print("T =", heat.T)
     print("Solution =", heat.general_solution)
+
+    laplace = Laplace_Equation([
+        Laplace_Boundary_Condition("x",0,0),
+        Laplace_Boundary_Condition("x",L,0),
+        Laplace_Boundary_Condition("y",0,0),
+        Laplace_Boundary_Condition("y",L,0)
+    ])
+
+    laplace.solve()
+
+    print("\nLAPLACE EQUATION")
+    print("General Solution =", laplace.general_solution)
+    print("Boundary Equations =", laplace.boundary_equations)
 
 
 if __name__ == "__main__":
