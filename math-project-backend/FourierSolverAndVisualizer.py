@@ -234,7 +234,45 @@ class Wave_Equation:
         self.solve_initial_conditions()
         return sp.latex(self.general_solution)
 
+class Laplace_Equation:
+    X = C1 * sp.sin(p*x) + C2 * sp.cos(p*x)
+    Y = C3 * sp.exp(p*y) + C4 * sp.exp(-p*y)
+    general_solution = X * Y
 
+    def __init__(self,boundary_conditions=None,lower=0,upper=L):
+        self.length=upper-lower
+        self.lower=lower
+        self.upper=upper
+        self.boundary_conditions=boundary_conditions or []
+        self.general_solution=Laplace_Equation.general_solution
+        self.boundary_equations=[]
+        self.solution=None
+
+    def solve(self):
+        self.boundary_equations=[]
+
+        for cond in self.boundary_conditions:
+            if cond.variable=="x":
+                expression=self.general_solution.subs(x,cond.position)
+            elif cond.variable=="y":
+                expression=self.general_solution.subs(y,cond.position)
+            else:
+                raise ValueError("Variable must be x or y")
+
+            self.boundary_equations.append(
+                sp.Eq(expression,cond.value,evaluate=False)
+            )
+
+        if len(self.boundary_conditions)!=4:
+            raise ValueError("Four boundary conditions are required")
+
+        if all(sp.simplify(cond.value)==0 for cond in self.boundary_conditions):
+            self.solution=sp.Integer(0)
+            return sp.latex(self.solution)
+
+        raise NotImplementedError(
+            "Nonzero boundary conditions require a Fourier series solution."
+        )
 class Condition:
     def __init__(self, condition_type):
         self.type = condition_type
@@ -270,7 +308,13 @@ class Temperature_Condition(Initial_Condition):
         super().__init__("Temperature")
         self.value = value
 
-
+class Laplace_Boundary_Condition(Condition):
+    def __init__(self,variable,position,value):
+        super().__init__("Laplace_Boundary")
+        self.variable=variable
+        self.position=position
+        self.value=value
+        
 def main():
     wave = Wave_Equation(
         [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
@@ -284,15 +328,21 @@ def main():
             Velocity_Condition(0),
         ],
     )
-    sp.pprint(wave.solve())
+    # sp.pprint(wave.solve())
     heat = Heat_Equation(
         [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
         [
             Temperature_Condition(x * (L**2 - x**2) / 100),
         ],
     )
-    sp.pprint(heat.solve())
-
+    # sp.pprint(heat.solve())
+    laplace=Laplace_Equation([
+        Laplace_Boundary_Condition("x",0,0),
+        Laplace_Boundary_Condition("x",L,0),
+        Laplace_Boundary_Condition("y",0,0),
+        Laplace_Boundary_Condition("y",L,0)
+    ])
+    sp.pprint(laplace.solve())
 
 if __name__ == "__main__":
     main()
