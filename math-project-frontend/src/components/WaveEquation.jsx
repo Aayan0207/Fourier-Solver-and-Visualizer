@@ -4,6 +4,7 @@ import OutputBlock from "./OutputBlock";
 import InputBlock from "./InputBlock";
 import getExpression from "../assets/ComputeEngine";
 import InputBlockRegular from "./InputBlockRegular";
+import Spinner from "./Spinner";
 
 function WaveEquation() {
   const [boundary_0, setBoundary_0] = useState(0);
@@ -12,7 +13,10 @@ function WaveEquation() {
   const [velocity, setVelocity] = useState(0);
   const [upper, setUpper] = useState("L");
   const [answer, setAnswer] = useState(null);
+  const [showSpinner, setShowSpinner] = useState(false);
   function solveWave() {
+    setAnswer(null);
+    setShowSpinner(true);
     fetch("http://127.0.0.1:5000/solve_wave", {
       method: "POST",
       body: JSON.stringify({
@@ -28,7 +32,10 @@ function WaveEquation() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setAnswer(data);
+        setTimeout(() => {
+          setShowSpinner(false);
+          setAnswer(data);
+        }, 500);
       })
       .catch((e) => {
         console.log(e);
@@ -55,6 +62,7 @@ function WaveEquation() {
         >
           Solve
         </button>
+        {showSpinner ? <Spinner /> : ""}
         {answer != null ? <OutputBlock value={answer} /> : ""}
       </div>
     </>

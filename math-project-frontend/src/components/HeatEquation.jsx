@@ -4,14 +4,18 @@ import Condition from "./Conditon";
 import InputBlock from "./InputBlock";
 import OutputBlock from "./OutputBlock";
 import InputBlockRegular from "./InputBlockRegular";
+import Spinner from "./Spinner";
 
 function HeatEquation() {
   const [boundary_0, setBoundary_0] = useState(0);
   const [boundary_L, setBoundary_L] = useState(0);
   const [temperature, setTemperature] = useState(0);
-  const [upper,  setUpper] = useState("L");
+  const [upper, setUpper] = useState("L");
   const [answer, setAnswer] = useState(null);
+  const [showSpinner, setShowSpinner] = useState(false);
   function solveHeat() {
+    setAnswer(null);
+    setShowSpinner(true);
     fetch("http://127.0.0.1:5000/solve_heat", {
       method: "POST",
       body: JSON.stringify({
@@ -26,7 +30,10 @@ function HeatEquation() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setAnswer(data);
+        setTimeout(() => {
+          setShowSpinner(false);
+          setAnswer(data);
+        }, 500);
       })
       .catch((e) => {
         console.log(e);
@@ -51,6 +58,7 @@ function HeatEquation() {
         >
           Solve
         </button>
+        {showSpinner ? <Spinner /> : ""}
         {answer != null ? <OutputBlock value={answer} /> : ""}
       </div>
     </>

@@ -17,30 +17,35 @@ function App() {
       return <LaplaceEquation />;
     },
   };
-  console.log(page);
   return (
     <>
-      <ModeButton
-        name="Wave Equation (1-D)"
-        onClick={() => setPage("wave")}
-        value={
-          "\\frac{\\partial^2 u}{\\partial t^2} = c^2\\frac{\\partial^2 u}{\\partial x^2}"
-        }
-      ></ModeButton>
-      <ModeButton
-        name="Heat Equation"
-        onClick={() => setPage("heat")}
-        value={
-          "\\frac{\\partial u}{\\partial t} = c^2\\frac{\\partial^2 u}{\\partial x^2}"
-        }
-      ></ModeButton>
-      <ModeButton
-        name="Laplace Equation"
-        onClick={() => setPage("laplace")}
-        value={
-          "\\frac{\\partial^2 u}{\\partial x^2} + \\frac{\\partial^2 u}{\\partial y^2} = 0"
-        }
-      ></ModeButton>
+      <h1 id="project_title">Math Project</h1>
+      <div className="mode_buttons">
+        <ModeButton
+          name="Wave Equation (1-D)"
+          key="wave"
+          onClick={() => setPage("wave")}
+          value={
+            "\\frac{\\partial^2 u}{\\partial t^2} = c^2\\frac{\\partial^2 u}{\\partial x^2}"
+          }
+        ></ModeButton>
+        <ModeButton
+          name="Heat Equation (1-D)"
+          key="heat"
+          onClick={() => setPage("heat")}
+          value={
+            "\\frac{\\partial u}{\\partial t} = c^2\\frac{\\partial^2 u}{\\partial x^2}"
+          }
+        ></ModeButton>
+        <ModeButton
+          name="Laplace Equation"
+          key="laplace"
+          onClick={() => setPage("laplace")}
+          value={
+            "\\frac{\\partial^2 u}{\\partial x^2} + \\frac{\\partial^2 u}{\\partial y^2} = 0"
+          }
+        ></ModeButton>
+      </div>
       <div className="page">{pages[page]?.()}</div>
     </>
   );
