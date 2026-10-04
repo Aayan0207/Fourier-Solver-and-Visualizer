@@ -62,3 +62,38 @@ def solve_heat():
     except (ValueError, AttributeError):
         session["heat"] = r"\text{Unable to solve this equation.}"
     return jsonify(session["heat"])
+
+
+@app.route("/solve_laplace", methods=["POST"])
+def solve_laplace():
+    body = request.get_json()
+    session["left_boundary"] = body.get("left_boundary")
+    session["right_boundary"] = body.get("right_boundary")
+    session["bottom_boundary"] = body.get("bottom_boundary")
+    session["top_boundary"] = body.get("top_boundary")
+    session["upper"] = body.get("upper")
+    try:
+        session["laplace"] = Laplace_Equation(
+            boundary_conditions=[
+                Laplace_Boundary_Condition(
+                    "x", 0, generate_condition(session["left_boundary"])
+                ),
+                Laplace_Boundary_Condition(
+                    "x",
+                    generate_condition(session["upper"]),
+                    generate_condition(session["right_boundary"]),
+                ),
+                Laplace_Boundary_Condition(
+                    "y", 0, generate_condition(session["bottom_boundary"])
+                ),
+                Laplace_Boundary_Condition(
+                    "y",
+                    generate_condition(session["upper"]),
+                    generate_condition(session["top_boundary"]),
+                ),
+            ],
+            upper=generate_condition(session["upper"]),
+        ).solve()
+    except (ValueError, AttributeError):
+        session["laplace"] = r"\text{Unable to solve this equation.}"
+    return jsonify(session["laplace"])
