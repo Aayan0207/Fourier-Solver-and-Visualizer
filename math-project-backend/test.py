@@ -88,9 +88,7 @@ questions_heat = [
             Boundary_Condition(L, 0),
         ],
         [
-            Temperature_Condition(
-                sp.sin(sp.pi * x / L)
-            ),
+            Temperature_Condition(sp.sin(sp.pi * x / L)),
         ],
     ),
     (
@@ -100,8 +98,7 @@ questions_heat = [
         ],
         [
             Temperature_Condition(
-                sp.sin(sp.pi * x / 2)
-                + 3 * sp.sin(5 * sp.pi * x / 2)
+                sp.sin(sp.pi * x / 2) + 3 * sp.sin(5 * sp.pi * x / 2)
             ),
         ],
     ),
@@ -120,9 +117,7 @@ questions_heat = [
             Boundary_Condition(100, 0),
         ],
         [
-            Temperature_Condition(
-                50 * sp.sin(sp.pi * x / 100)
-            ),
+            Temperature_Condition(50 * sp.sin(sp.pi * x / 100)),
         ],
     ),
     (
@@ -131,9 +126,7 @@ questions_heat = [
             Boundary_Condition(L, 0),
         ],
         [
-            Temperature_Condition(
-                sp.sin(sp.pi * x / L)
-            ),
+            Temperature_Condition(sp.sin(sp.pi * x / L)),
         ],
     ),
     (
@@ -152,6 +145,22 @@ questions_heat = [
     ),
 ]
 
+questions_laplace = [
+    [
+        Laplace_Boundary_Condition("x", 0, 0),
+        Laplace_Boundary_Condition("x", sp.pi, 0),
+        Laplace_Boundary_Condition("y", 0, sp.sin(x) ** 2),
+        Laplace_Boundary_Condition("y", sp.pi, 0),
+    ],
+    [
+        Laplace_Boundary_Condition("x", 0, 10),
+        Laplace_Boundary_Condition("x", L, 10),
+        Laplace_Boundary_Condition("y", 0, 10),
+        Laplace_Boundary_Condition("y", L, 100),
+    ],
+]
+
+
 @pytest.mark.parametrize("boundary_conditions, initial_conditions", questions_wave)
 def test_wave_equation(boundary_conditions, initial_conditions):
     wave = Wave_Equation(
@@ -166,6 +175,21 @@ def test_wave_equation(boundary_conditions, initial_conditions):
     u_xx = sp.diff(u, x, 2)
 
     assert sp.simplify(u_tt - c**2 * u_xx) == 0 and u_tt != 0 and u_xx != 0
+
+
+@pytest.mark.parametrize("boundary_conditions", questions_laplace)
+def test_laplace_equation(boundary_conditions):
+    laplace = Laplace_Equation(
+        boundary_conditions=boundary_conditions,
+    )
+
+    laplace.solve()
+
+    u = laplace.general_solution
+    u_yy = sp.diff(u, y, 2)
+    u_xx = sp.diff(u, x, 2)
+
+    assert sp.simplify(u_xx + u_yy) == 0 and u_yy != 0 and u_xx != 0
 
 
 @pytest.mark.parametrize("boundary_conditions, initial_conditions", questions_heat)
