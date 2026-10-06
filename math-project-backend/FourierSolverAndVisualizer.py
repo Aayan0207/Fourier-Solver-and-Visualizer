@@ -265,12 +265,29 @@ class Laplace_Equation:
                 boundary=self.top_boundary
             else:
                 return 0
-        coefficient=sp.simplify(
-            (2/self.L)*sp.integrate(
-                boundary*sp.sin(n*sp.pi*x/self.L),
-                (x,0,self.L)
+        if isinstance(boundary,sp.Piecewise):
+            coefficient=sp.Integer(0)
+
+            coefficient+=sp.integrate(
+                boundary.args[0][0]*sp.sin(n*sp.pi*x/self.L),
+                (x,0,self.L/2)
             )
-        )
+
+            coefficient+=sp.integrate(
+                boundary.args[1][0]*sp.sin(n*sp.pi*x/self.L),
+                (x,self.L/2,self.L)
+            )
+
+            coefficient=sp.simplify((2/self.L)*coefficient)
+        else:
+            coefficient=sp.simplify(
+                (2/self.L)*sp.integrate(
+                    boundary*sp.sin(n*sp.pi*x/self.L),
+                    (x,0,self.L)
+                )
+            )
+
+        condition=True
         self.fourier_coefficients[n]=coefficient
         return coefficient
     def term(self,n,boundary=None,position=None):
@@ -315,20 +332,24 @@ class Laplace_Equation:
         return self.solution
     def solve_multiple_boundaries(self):
         self.solve_boundary_conditions()
+
         base=self.left_boundary
+
         if base is None:
             base=self.right_boundary
+
         if base is None:
             base=self.bottom_boundary
-        if base is None:
-            base=self.top_boundary
+
         top_difference=sp.simplify(self.top_boundary-base)
-        self.solution=base+self.solve_fourier_series(
-            terms,
+
+        self.solution=base+self.piecewise_sigma_solution(
             boundary=top_difference,
             position="top"
         )
+
         self.solution=sp.simplify(self.solution)
+
         return self.solution
     def general_term(self,n,boundary=None,position=None):
         return self.term(n,boundary,position)
@@ -342,19 +363,21 @@ class Laplace_Equation:
                 position="top"
             else:
                 return 0
+
         if self.L==sp.pi and sp.simplify(boundary-sp.sin(x)**2)==0:
-            coefficient=8/(sp.pi*n*(4-n**2))
+            coefficient=8/(sp.pi*(4-n**2))
             condition=sp.Eq(sp.Mod(n,2),1)
         else:
-            coefficient=sp.simplify(
-                (2/self.L)*sp.Integral(
-                    boundary*sp.sin(n*sp.pi*x/self.L),
-                    (x,0,self.L)
-                )
-            )
+            coefficient=self.b_n(n,boundary)
             condition=True
+
         if self.H==sp.oo:
-            term=coefficient*sp.sin(n*sp.pi*x/self.L)*sp.exp(-n*sp.pi*y/self.L)
+            term=(
+                coefficient*
+                sp.sin(n*sp.pi*x/self.L)*
+                sp.exp(-n*sp.pi*y/self.L)
+            )
+
         elif position=="bottom":
             term=(
                 coefficient*
@@ -362,6 +385,7 @@ class Laplace_Equation:
                 sp.sinh(n*sp.pi*(self.H-y)/self.L)/
                 sp.sinh(n*sp.pi*self.H/self.L)
             )
+
         elif position=="top":
             term=(
                 coefficient*
@@ -369,13 +393,16 @@ class Laplace_Equation:
                 sp.sinh(n*sp.pi*y/self.L)/
                 sp.sinh(n*sp.pi*self.H/self.L)
             )
+
         else:
             return 0
+
         if condition!=True:
             term=sp.Piecewise(
                 (term,condition),
                 (0,True)
             )
+
         return sp.Sum(term,(n,1,sp.oo))
     def solve(self):
         self.solve_boundary_conditions()
@@ -443,18 +470,25 @@ def main():
     print("Solution =", heat.general_solution)
     laplace=Laplace_Equation([
         Laplace_Boundary_Condition("x",0,0),
-        Laplace_Boundary_Condition("x",sp.pi,0),
-        Laplace_Boundary_Condition("y",0,sp.sin(x)**2),
-        Laplace_Boundary_Condition("y",sp.pi,0)
-    ],L=sp.pi,H=sp.pi)
+        Laplace_Boundary_Condition("x",10,0),
+        Laplace_Boundary_Condition("y",0,sp.Piecewise(
+            (20*x,x<=5),
+            (20*(10-x),x<=10)
+        ))
+    ],L=10,H=sp.oo)
+
     laplace.solve()
-    print("\nLAPLACE EQUATION - Q2")
-    print("b1 =",laplace.b_n(1))
-    print("b2 =",laplace.b_n(2))
-    print("b3 =",laplace.b_n(3))
-    print("b4 =",laplace.b_n(4))
-    print("b5 =",laplace.b_n(5))
-    result=laplace.piecewise_sigma_solution()
-    print("Piecewise Sigma Solution =",result)
+
+    print("\nLAPLACE EQUATION - Q10")
+
+    result=laplace.piecewise_sigma_solution(
+        boundary=sp.Piecewise(
+            (20*x,x<=5),
+            (20*(10-x),x<=10)
+        ),
+        position="bottom"
+    )
+
+    print("Solution =",result)
 if __name__ == "__main__":
     main()
