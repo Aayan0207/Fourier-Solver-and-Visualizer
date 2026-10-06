@@ -212,7 +212,8 @@ class Wave_Equation:
             2
             / self.length
             * sp.integrate(
-                displacement * sp.sin(n * sp.pi * x / self.length), (x, 0, self.length)
+                displacement * sp.sin(n * sp.pi * x / self.length),
+                (x, 0, self.length),
             )
         )
         return sp.simplify(b_n)
@@ -222,7 +223,8 @@ class Wave_Equation:
             2
             / (n * sp.pi * c)
             * sp.integrate(
-                velocity * sp.sin(n * sp.pi * x / self.length), (x, 0, self.length)
+                velocity * sp.sin(n * sp.pi * x / self.length),
+                (x, 0, self.length),
             )
         )
         return sp.simplify(a_n)
