@@ -5,6 +5,7 @@ import InputBlock from "./InputBlock";
 import OutputBlock from "./OutputBlock";
 import Spinner from "./Spinner";
 import InputBlockRegular from "./InputBlockRegular";
+import { BlockMath } from "react-katex";
 
 function LaplaceEquation() {
   const [leftBoundary, setLeftBoundary] = useState(0);
@@ -52,6 +53,20 @@ function LaplaceEquation() {
           <InputBlockRegular value={right} setValue={setRight} />
           <Condition left="H"></Condition>
           <InputBlockRegular value={upper} setValue={setUpper} />
+          <button
+            className="infinity_button"
+            onClick={() => {
+              setUpper((prev) => {
+                if (prev !== "\\infty") {
+                  setUpper("\\infty");
+                  return;
+                }
+                setUpper("H");
+              });
+            }}
+          >
+            <BlockMath>{"\\infty"}</BlockMath>
+          </button>
         </div>
         <Condition left="u(0,y)"></Condition>
         <InputBlock value={leftBoundary} setValue={setLeftBoundary} />

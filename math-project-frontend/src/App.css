@@ -224,7 +224,8 @@ body::before {
   box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.1);
 }
 
-.input_block > button {
+.piecewise_input_button,
+.infinity_button {
   padding: 10px 18px;
   height: 42px;
   font-family: "Inter", sans-serif;
@@ -241,9 +242,13 @@ body::before {
   transition:
     background 0.2s ease,
     border-color 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.input_block > button:hover {
+.piecewise_input_button:hover,
+.infinity_button:hover {
   background: rgba(45, 212, 191, 0.12);
   border-color: var(--teal);
 }
