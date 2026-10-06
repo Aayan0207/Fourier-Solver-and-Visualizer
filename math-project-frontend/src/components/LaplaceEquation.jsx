@@ -11,7 +11,8 @@ function LaplaceEquation() {
   const [rightBoundary, setRightBoundary] = useState(0);
   const [bottomBoundary, setBottomBoundary] = useState(0);
   const [topBoundary, setTopBoundary] = useState(0);
-  const [upper, setUpper] = useState("L");
+  const [upper, setUpper] = useState("H");
+  const [right, setRight] = useState("L");
   const [answer, setAnswer] = useState(null);
   const [showSpinner, setShowSpinner] = useState(false);
   function solveLaplace() {
@@ -25,6 +26,7 @@ function LaplaceEquation() {
         top_boundary: getExpression(topBoundary),
         bottom_boundary: getExpression(bottomBoundary),
         upper: getExpression(upper),
+        right: getExpression(right),
       }),
       headers: {
         "content-type": "application/json",
@@ -45,15 +47,19 @@ function LaplaceEquation() {
     <>
       <div className="laplace_conditions">
         <h3>Laplace Equation</h3>
-        <Condition left="L"></Condition>
-        <InputBlockRegular value={upper} setValue={setUpper} />
+        <div className="regular_conditions_container">
+          <Condition left="L"></Condition>
+          <InputBlockRegular value={right} setValue={setRight} />
+          <Condition left="H"></Condition>
+          <InputBlockRegular value={upper} setValue={setUpper} />
+        </div>
         <Condition left="u(0,y)"></Condition>
         <InputBlock value={leftBoundary} setValue={setLeftBoundary} />
         <Condition left="u(L,y)"></Condition>
         <InputBlock value={rightBoundary} setValue={setRightBoundary} />
         <Condition left="u(x,0)"></Condition>
         <InputBlock value={bottomBoundary} setValue={setBottomBoundary} />
-        <Condition left="u(x,L)"></Condition>
+        <Condition left="u(x,H)"></Condition>
         <InputBlock value={topBoundary} setValue={setTopBoundary} />
         <button
           className="solve_button"
