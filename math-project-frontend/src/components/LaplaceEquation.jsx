@@ -58,10 +58,9 @@ function LaplaceEquation() {
             onClick={() => {
               setUpper((prev) => {
                 if (prev !== "\\infty") {
-                  setUpper("\\infty");
-                  return;
+                  return "\\infty";
                 }
-                setUpper("H");
+                return "H";
               });
             }}
           >
