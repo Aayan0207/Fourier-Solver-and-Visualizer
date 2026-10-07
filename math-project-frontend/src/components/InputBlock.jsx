@@ -29,13 +29,12 @@ function InputBlock({ value, setValue }) {
     }
   }
 
+  function handleBlur() {
+    window.mathVirtualKeyboard.hide();
+  }
+
   return (
-    <div
-      className="input_block"
-      onBlur={() => {
-        window.mathVirtualKeyboard.hide();
-      }}
-    >
+    <div className="input_block" onBlur={handleBlur}>
       <math-field
         onChange={(e) => setValue(e.target.value)}
         value={value}

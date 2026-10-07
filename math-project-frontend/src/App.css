@@ -487,3 +487,19 @@ body::before {
   justify-content: flex-start;
   align-items: center;
 }
+
+@media (pointer: coarse) {
+  .mode_button,
+  .solve_button,
+  .piecewise_input_button,
+  .infinity_button {
+    touch-action: manipulation;
+  }
+
+  .mode_button:active,
+  .solve_button:active,
+  .piecewise_input_button:active,
+  .infinity_button:active {
+    transform: none;
+  }
+}
