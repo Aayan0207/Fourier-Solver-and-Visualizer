@@ -72,6 +72,7 @@ def solve_laplace():
     session["bottom_boundary"] = body.get("bottom_boundary")
     session["top_boundary"] = body.get("top_boundary")
     session["upper"] = body.get("upper")
+    session["right"] = body.get("right")
     try:
         session["laplace"] = Laplace_Equation(
             boundary_conditions=[
@@ -80,7 +81,7 @@ def solve_laplace():
                 ),
                 Laplace_Boundary_Condition(
                     "x",
-                    generate_condition(session["upper"]),
+                    generate_condition(session["right"]),
                     generate_condition(session["right_boundary"]),
                 ),
                 Laplace_Boundary_Condition(
@@ -92,7 +93,8 @@ def solve_laplace():
                     generate_condition(session["top_boundary"]),
                 ),
             ],
-            upper=generate_condition(session["upper"]),
+            H=generate_condition(session["upper"]),
+            L=generate_condition(session["right"])
         ).solve()
     except (ValueError, AttributeError):
         session["laplace"] = r"\text{Unable to solve this equation.}"
