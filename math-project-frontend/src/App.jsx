@@ -19,7 +19,7 @@ function App() {
   };
   return (
     <>
-      <h1 id="project_title">Math Project</h1>
+      <h1 id="project_title">PDE Lab</h1>
       <div className="mode_buttons">
         <ModeButton
           name="Wave Equation (1-D)"
