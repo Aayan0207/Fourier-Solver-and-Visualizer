@@ -9,7 +9,12 @@ function InputBlock({ value, setValue }) {
     if (mfRef.current) {
       mfRef.current.mathVirtualKeyboardPolicy = "manual";
     }
-    window.mathVirtualKeyboard.layouts = ["numeric", "symbols","greek"];
+    window.mathVirtualKeyboard.layouts = [
+      "alphabetic",
+      "numeric",
+      "symbols",
+      "greek",
+    ];
   }, []);
 
   useEffect(() => {
@@ -17,6 +22,12 @@ function InputBlock({ value, setValue }) {
       setValue(0);
     }
   }, [piecewise, setValue]);
+
+  function handleFocus() {
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      window.mathVirtualKeyboard.show();
+    }
+  }
 
   return (
     <div
@@ -29,6 +40,7 @@ function InputBlock({ value, setValue }) {
         onChange={(e) => setValue(e.target.value)}
         value={value}
         ref={mfRef}
+        onFocus={handleFocus}
       ></math-field>
       <button
         onClick={() => setPiecewise((prev) => !prev)}
