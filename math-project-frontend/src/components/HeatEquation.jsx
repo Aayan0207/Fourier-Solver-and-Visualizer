@@ -16,7 +16,7 @@ function HeatEquation() {
   function solveHeat() {
     setAnswer(null);
     setShowSpinner(true);
-    fetch("https://pdelab-api.vercel.app//solve_heat", {
+    fetch("https://pdelab-api.vercel.app/solve_heat", {
       method: "POST",
       body: JSON.stringify({
         left_boundary: getExpression(boundary_0),

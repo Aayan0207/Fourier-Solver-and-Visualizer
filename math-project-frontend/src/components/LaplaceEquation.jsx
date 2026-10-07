@@ -19,7 +19,7 @@ function LaplaceEquation() {
   function solveLaplace() {
     setAnswer(null);
     setShowSpinner(true);
-    fetch("https://pdelab-api.vercel.app//solve_laplace", {
+    fetch("https://pdelab-api.vercel.app/solve_laplace", {
       method: "POST",
       body: JSON.stringify({
         left_boundary: getExpression(leftBoundary),
