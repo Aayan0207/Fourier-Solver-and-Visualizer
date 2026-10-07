@@ -17,7 +17,7 @@ function WaveEquation() {
   function solveWave() {
     setAnswer(null);
     setShowSpinner(true);
-    fetch("http://127.0.0.1:5000/solve_wave", {
+    fetch("https://pdelab-api.vercel.app//solve_wave", {
       method: "POST",
       body: JSON.stringify({
         left_boundary: getExpression(boundary_0),

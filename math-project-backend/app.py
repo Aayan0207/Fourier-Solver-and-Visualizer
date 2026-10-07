@@ -7,7 +7,7 @@ import sympy as sp
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", secrets.token_hex(16))
-CORS(app, origins=["http://localhost:5173"])
+CORS(app, origins=["https://pdelab.vercel.app"])
 
 
 @app.route("/solve_wave", methods=["POST"])
@@ -94,7 +94,7 @@ def solve_laplace():
                 ),
             ],
             H=generate_condition(session["upper"]),
-            L=generate_condition(session["right"])
+            L=generate_condition(session["right"]),
         ).solve()
     except (ValueError, AttributeError):
         session["laplace"] = r"\text{Unable to solve this equation.}"
