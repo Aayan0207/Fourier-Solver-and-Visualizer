@@ -8,6 +8,10 @@ engine._registerCompilationTarget(
   "python",
   new PythonTarget({ includeImports: false }),
 );
+const variables = ["x", "t", "y", "c", "L", "l", "p", "h", "k", "b", "a","m","n"];
+for (const variable of variables) {
+  engine.declare(variable, "real");
+}
 
 function getExpression(value) {
   if (!value) {

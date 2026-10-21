@@ -5,8 +5,8 @@ from sympy.parsing.sympy_parser import (
     implicit_multiplication_application,
 )
 
-C1, C2, C3, C4, x, y, p, c, t, a, L, lam, b, h, K, k = sp.symbols(
-    "C1 C2 C3 C4 x y p c t a L lambda b h K k"
+C1, C2, C3, C4, x, y, p, c, t, a, L, lam, b, h, K, k, l = sp.symbols(
+    "C1 C2 C3 C4 x y p c t a L lambda b h K k l"
 )
 n = sp.symbols("n", integer=True, positive=True)
 
@@ -485,14 +485,14 @@ class Laplace_Boundary_Condition(Condition):
 
 
 def main():
-    # wave = Wave_Equation(
-    #     [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
-    #     [
-    #         Displacement_Condition(x * (L**2 - x**2) / 100),
-    #         Velocity_Condition(0),
-    #     ],
-    # )
-    # print(wave.solve())
+    wave = Wave_Equation(
+        [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
+        [
+            Displacement_Condition(k * (L*x - x**2)),
+            Velocity_Condition(0),
+        ],
+    )
+    print(wave.solve())
     # heat = Heat_Equation(
     #     [Boundary_Condition(0, 0), Boundary_Condition(L, 0)],
     #     [
@@ -500,17 +500,17 @@ def main():
     #     ],
     # )
     # print(heat.solve())
-    laplace = Laplace_Equation(
-        [
-            Laplace_Boundary_Condition("x", 0, 0),
-            Laplace_Boundary_Condition("x", sp.pi, 0),
-            Laplace_Boundary_Condition("y", 0, sp.sin(x)),
-            Laplace_Boundary_Condition("y", sp.pi, 0),
-        ],
-        sp.pi,
-        sp.pi,
-    )
-    print(laplace.solve())
+    # laplace = Laplace_Equation(
+    #     [
+    #         Laplace_Boundary_Condition("x", 0, 0),
+    #         Laplace_Boundary_Condition("x", sp.pi, 0),
+    #         Laplace_Boundary_Condition("y", 0, sp.sin(x)),
+    #         Laplace_Boundary_Condition("y", sp.pi, 0),
+    #     ],
+    #     sp.pi,
+    #     sp.pi,
+    # )
+    # print(laplace.solve())
 
 
 if __name__ == "__main__":

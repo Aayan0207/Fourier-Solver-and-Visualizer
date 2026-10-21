@@ -13,7 +13,6 @@ function InputBlock({ value, setValue }) {
       "alphabetic",
       "numeric",
       "symbols",
-      "greek",
     ];
   }, []);
 

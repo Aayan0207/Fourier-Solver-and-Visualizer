@@ -7,7 +7,7 @@ function InputBlockRegular({ value, setValue }) {
     if (mfRef.current) {
       mfRef.current.mathVirtualKeyboardPolicy = "manual";
     }
-    window.mathVirtualKeyboard.layouts = ["alphabetic", "numeric", "greek"];
+    window.mathVirtualKeyboard.layouts = ["alphabetic", "numeric"];
   }, []);
 
   function handleBlur() {

@@ -202,6 +202,11 @@ body::before {
 .input_block_regular math-field::part(menu-toggle) {
   display: none;
 }
+
+.input_block math-field::part(menu-toggle) {
+  display: none;
+}
+
 .input_block math-field {
   flex: 1;
   min-width: 185px;
